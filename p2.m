@@ -1,35 +1,16 @@
-clc, clear, close all
-disp('P2 Matlab fun');
-disp('王宇涵2220213666');
-fc=imread('beach.jpg');
-fc1=imread('Minion.jpg');
-[r,c,d]=size(fc);
-[r1,c1,d1]=size(fc1);
-disp('The size of fc');
-disp(size(fc));
-disp('The size of fc1');
-disp(size(fc1))
-figure(1);
-image(fc);
-figure(2);
-image(fc1);
-rb=fc(:,:,1);
-gb=fc(:,:,2);
-bb=fc(:,:,3);
-rm=fc1(:,:,1);
-gm=fc1(:,:,2);
-bm=fc1(:,:,3);
-mask_Green=rm<10&gm>250&bm<30;
-maskfc=cat(3,mask_Green,mask_Green,mask_Green);
-fc2=fc;
-fc2(maskfc)=fc1(maskfc);
-figure(13);
-image(fc2);
-ww=find(maskfc(:,:,1)==1);
-sb=find(maskfc(:,:,1)==0);
-disp('white pixels');
-www=length(ww);
-disp(www);
-disp('black pixels');
-bbb=length(sb);
-disp(bbb);
+clc,clear
+M=[1,2,3,4;5,6,7,8;9,10,11,12;13,14,15,16];
+dlmwrite('M.txt',M)
+
+pause(5)
+
+Mtxt=input('Enter name of dataset ','s')
+M=load(Mtxt);
+[R,C]=size(M);
+
+E(:,C)=M(:,C)-8;
+E(:,C-1)=M(:,C-1)+10;
+E(:,C-2)=M(:,C-2).^2;
+E(:,C-3)=sqrt(M(:,C-3));
+
+FC=[M;E]

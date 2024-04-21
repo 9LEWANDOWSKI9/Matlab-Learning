@@ -1,68 +1,97 @@
-% ENGI 1331H Project2-王宇涵-2220213666
-clc,clear,close all
-repeat=1;
-Roots1=[];
-iter1=[];
-while repeat==1
-num=input('Enter a vector of coefficents for an odd-order polynomial:');
-c=1;
-L=length(num);
-while (mod(L,2)==1) && c~=5 % Because the number of elements should be odd)
-    c=c+1;
-    num=input('Enter a vector of coefficents for an odd-order polynomial:');
+% ENGI 1331H Project4-王宇涵-2220213666
+% Task 1
+clc,clear,close all 
+a=csvread('SeismicData.csv');
+[row,col]=size(a);
+value=0;
+for r=1:row
+    for c=1:col
+        while a(r,c) <= 0
+          question=sprintf('Replace the nagetive value at (%0.0f,%0.0f):',r,c);
+          newa=input(question);
+          a(r,c)=newa;
+           if a(r,c) > 0
+             value=value+1;
+           end
+        end
+    end
 end
-if c==5 && (mod(L,2)==1)
-    warning('Odd number of coefficents entered. Last element of user input removed');
-% Remove the last value of the vector
-num(L)=[];
-fprintf('The final vector after removing the last element is %d%d%d%d%d',num);
-end
-
+fprintf('There were %d values changed from negative/zero to positive\n',value);
 
 % Task 2
-% This task is to determine the derivative of T(V0)
-% The equcation is Vn=V(n-1)-T(V0)/T'(V0)
-% The derivative of the num is 
-numd=polyder(num);
-k=1;
-a=roots(numd);
-ROOT=input('Enter an initial guess for the Newton-Raphsono method:');
+location=[];
+d=input('Enter a velocity limit between 13500 and 15000 [m/s]: ');
+while d < 13500 || d > 15000
+    d=input('Enter a velocity limit between 13500 and 15000 [m/s]: ');
+end
+p=1;
+for r1=1:row
+    for c1=1:col
+        while a(r1,c1) > d
+            a(r1,c1)=d;
+            p=p+1;
+            location=[location;[r1,c1]];
+        end
+    end
+end
+
+fprintf('There were %d values over the velocity limit\n',p);
+csvwrite('SeismicData_changes.csv',a);
+% Task 3  % 对数据纵向排序
+k=0;
+
+for j=1:col
+    for z=1:row
+        for i=1:row-1
+            if a(i,j) > a(i+1,j)
+                k=a(i,j);
+                a(i,j)=a(i+1,j);
+                a(i+1,j)=k;
+            end
+        end
+    end
+end
+
+% Task 4
+% vn=(v-vmin)/(vmax-vmin)
 
 
-   while ROOT==a
+normalize=[];
+repeat=1;
+while repeat==1
+    u=input('Which location"s data would you like to normalize?');
+    fprintf('Original\tNormalized\n');
+    for v=1:row
+        normalize(v)=(a(v,u)-a(1,u))/(a(row,u)-a(1,u));
+       
+        fprintf('%5d%13.4f\n',a(v,u),normalize(v));
+    end
+    repeat=menu('Would you like to normalize another column?','Yes','NO');
+end
+
+% Task 6
+subplot(2,1,1);
+x1=a(1:row,u);
+y1=normalize(1,1:end);
+plot(x1,y1,'r');
+
+title('');
+xlabel('The measurement number');
+ylabel('The normalized velocities');
+hold on
+grid on
+
+subplot(2,1,2);
+x2=a(1:row,u);
+y2=normalize(1,1:end);
+plot(y2,x2,'r');
+title('');
+xlabel('The measurement number');
+ylabel('The normalized velocities');
+hold on
+grid on
+
    
-    if k~=3
-    k=k+1;
-    ROOT=input('Enter an initial guess for the Newton-Raphsono method:');
-    else
-     error('Initial guess causes a divide by 0 error. Exiting program');    
-    end
-    end
-
-
-
-percenterror=input('Enter the percent difference to compute to [0.1%-10%]:');
-
-[Roots,iter]=NewtonRaphson(num,ROOT,percenterror);
-RR=find(Roots>0);
-RRR=Roots(RR);
-fprintf('The volume at T=0 for the given equation is %f.[m^3]\n',RRR);
-
-fprintf('The solution converged in %d interations\n',iter);
-% Task 4 Repeat and store the data
-repeat=menu('Repeat the Newton-Raphson calculation?','Yes','No');
-while repeat==0
-    repeat=menu('Repeat the Newton-Raphson calculation?','Yes','No');
-end
-Roots1=[Roots1,Roots];
-iter1=[iter1,iter];
-end
-save('Problem2_Results.mat','Roots1','iter1')
-
-
-
-
-
     
 
 

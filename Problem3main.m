@@ -1,49 +1,94 @@
-% ENGI 1331H Project2-王宇涵-2220213666
-clc,clear,close all
-load('MaterialElasticity.mat');
-s=menu('Select a material',Material);
-E=Elasticity(s);
-v=input('Enter the length, width and height of the beam as a 1*3 vector:');
-F=input('Enter the magnitude of a concentrated force acting on the beam:');
-a=input('Enter the location of the force(0-10.00meters):');
-i=0;
-for x=0:0.1:v(1)
-    i=i+1;
-   [deflection]=CalcDeflection(x,F,a,E,v); 
-   X(i)=x;
-   deflection1(i)=deflection*1000;
-end
-plot(X,deflection1,'-');
-xlim([0,v(1)]);
-xlabel('Beam Location (x) [m]');
-ylabel('Deflection of Beam (y) [mm]');
-title('Deflection of Steel Beam Under a Concentrated Load')
-grid on
+% ENGI 1331H Project4-王宇涵-2220213666
+clc,clear,close all 
+% Task 1
+a=imread('MRI_Scan.png'); % Bigger background
+b=imread('Tumor.png');
+[r1,c1,~]=size(a);
+[r2,c2,~]=size(b);
 
-% Task 2
-F1=input('Enter the magnitude of multiple loads on the beam [N]:');
-a1=input('Enter the locations of the forces, in order (0-10.00meters):');
-deflection11=zeros(length(a1),v(1));
-for n=1:length(a1)
-    A=a1(n);
-    F11=F1(n);
-    k=0;
-    for x=0:0.1:v(1)
-        k=k+1;
-        [deflection13]=CalcDeflection(x,F11,A,E,v);
-        deflection11(n,k)=deflection13*1000;
+while (r2 > r1) ||( c2 > c1)
+    if (r2 > r1) && ( c2 > c1)
+        error('There is an error. Elimate the program');
+    elseif r2 > r1
+         error('There is an error. Elimate the program');
+    else
+         error('There is an error. Elimate the program');
     end
 end
- Totalvalue=sum(deflection11);
- Totalvaluemax=min(Totalvalue);
- TTT=abs(Totalvaluemax);
- fprintf('The maxmimum deflection of the beam is %0.3f [mm]',TTT);
- plot(X,Totalvalue,'-');
-xlim([0,v(1)]);
-xlabel('Beam Location (x) [m]');
-ylabel('Deflection of Beam (y) [mm]');
-title('Deflection of Steel Beam Under a Concentrated Load')
-grid on
-        
-        
-        
+% Task 2
+location=[];
+tic;
+for r=1:r1-r2+1
+    for c=1:c1-c2+1
+      if a(r,c)==b(1,1)
+           found=1;
+            
+            for rcheck=1:r2
+                for ccheck=1:c2
+            if b(rcheck,ccheck)~=a(r+rcheck-1,c+ccheck-1)
+           found=0;
+           
+            end
+                end
+            end
+            if found==1
+            location=[location;[r,c,r+r2-1,c+c2-1]];
+            end
+            
+      end
+    end
+end
+[number,~]=size(location);
+for k=1:number
+    fprintf('The tumor is located between the coordinates [%d,%d] and [%d,%d] starting from the top left corner of the MRI scan\n',location(k,1),location(k,2),location(k,3),location(k,4));
+end
+
+% Task 3
+P1=imread('MRI_Scan.png');
+P2=imread('Tumor.png');
+%P1_gray=rgb2gray(P1);
+%P2_gray=rgb2gray(P2);
+  for n1=1:r1
+      for n2=1:c1
+            P1_gray(n1,n2)=P1(n1,n2,1)*0.2989+P1(n1,n2,2)*0.5870 +P1(n1,n2,3)*0.1140  ;
+      end
+  end
+ 
+%  P2_gray=rgb2gray(P2); 
+%  Li=mean(P2(:))
+GEORGE=0;
+ for n1=1:r2
+      for n2=1:c2
+            P2_gray(n1,n2)=P2(n1,n2,1)*0.2989+P2(n1,n2,2)*0.5870 +P2(n1,n2,3)*0.1140;
+            GEORGE=double(GEORGE)+double(P2_gray(n1,n2));
+      end
+  end  
+PAUL=GEORGE/(c2*r2);   
+    
+      
+    for n1=location(1):location(3)
+        for n2=location(2):location(4)
+            if P1_gray(n1,n2)>=PAUL
+                P1(n1,n2,1)=255;
+                P1(n1,n2,2)=255;
+                P1(n1,n2,3)=0;
+            end
+        end
+    end
+image(P1)
+toc;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

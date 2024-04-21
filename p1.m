@@ -1,19 +1,7 @@
-% 王宇涵2220213666P2
-clc, clear,close all
-NBR=load('numbers.txt');
-A=sum(NBR);
-disp('The sum of all values');
-disp(A);
-B=find(NBR>60);
-C=find(NBR<7);
-NBR1=NBR;
-NBR1(B)=44;
-NBR1(C)=44;
-BB=length(B);
-CC=length(C);
-DD=BB+CC;
-disp('The total values that are replaced');
-disp(DD);
-K=sum(NBR1);
-disp('The sum of values of new NBR');
-disp(K);
+clc,clear
+CC=[1,3,5,7,9,11,13]
+DD=[2,4,6,8,10,12,14]
+EE=(CC-DD).^2
+FF=sum(EE)
+GG=FF/length(EE)
+HH=sqrt(GG)
